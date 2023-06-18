@@ -25,3 +25,9 @@ Conduct the Poisoned data detection:
 python main_poisoned_data_det.py
 ```
 
+## Instruction
+Run `intrusion-detection-system-unsw-nb15.ipynb` to create datafiles first beforehand.
+Then run as below:
+```
+python3.10 main_poisoned_data_det.py
+```
