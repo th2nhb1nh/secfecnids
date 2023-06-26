@@ -740,8 +740,7 @@ if __name__ == '__main__':
             profiler = TorchProfiler(model)
             layerdict = profiler.create_layers(0)  #### all layers
             print(layerdict)
-            tp = profiler.create_profile(torch.rand(1, 1, 42), layerdict, threshold=0.5, show_progress=False,
-                                         parallel=False)
+            tp = profiler.create_profile(torch.rand(1, 1, 42), layerdict, threshold=0.5, show_progress=False, parallel=False)
             class_profiles = dict()
             selected_index = dict()
             class_profiles_mal = dict()
