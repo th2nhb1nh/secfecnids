@@ -812,7 +812,6 @@ if __name__ == '__main__':
                     avg_ious = np.mean(ious)
                     iou_normal[cls].append(avg_ious)
             for cls in range(2):
-                print('cls')
                 print('cls', cls, 'iou_normal', np.mean(np.array(iou_normal[cls])))
                 # iou_threshold[cls] = np.median(np.array(iou_normal[cls]))                \
                 iou_threshold[cls] = np.percentile(np.array(iou_normal[cls]), 5)

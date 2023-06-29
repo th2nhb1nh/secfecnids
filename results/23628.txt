@@ -32,3 +32,114 @@ Test set: Average loss: 0.0198
 Accuracy: 172469/240000 (71.86%)
 
 Testing accuracy: 71.86
+
+
+################# iou_threshold=1.0 #################
+               precision    recall  f1-score   support
+
+           0       0.50      1.00      0.67    120000
+           1       0.00      0.00      0.00    120000
+
+    accuracy                           0.50    240000
+   macro avg       0.25      0.50      0.33    240000
+weighted avg       0.25      0.50      0.33    240000
+
+[[120000      0]
+ [120000      0]]
+test_loss 5214.74938424524
+
+Test set: Average loss: 0.0217 
+Accuracy: 120000/240000 (50.00%)
+
+Testing accuracy: 50.00
+              precision    recall  f1-score   support
+
+           0       0.50      1.00      0.67    120000
+           1       0.00      0.00      0.00    120000
+
+    accuracy                           0.50    240000
+   macro avg       0.25      0.50      0.33    240000
+weighted avg       0.25      0.50      0.33    240000
+
+[[120000      0]
+ [120000      0]]
+test_loss 5214.74938424524
+
+Test set: Average loss: 0.0217 
+Accuracy: 120000/240000 (50.00%)
+
+Testing accuracy: 50.00
+
+################# iou_threshold=0 #################
+precision    recall  f1-score   support
+
+           0       0.50      1.00      0.67    120000
+           1       0.00      0.00      0.00    120000
+
+    accuracy                           0.50    240000
+   macro avg       0.25      0.50      0.33    240000
+weighted avg       0.25      0.50      0.33    240000
+
+[[120000      0]
+ [120000      0]]
+test_loss 6043.113278492496
+
+Test set: Average loss: 0.0252 
+Accuracy: 120000/240000 (50.00%)
+
+Testing accuracy: 50.00
+              precision    recall  f1-score   support
+
+           0       0.50      1.00      0.67    120000
+           1       0.00      0.00      0.00    120000
+
+    accuracy                           0.50    240000
+   macro avg       0.25      0.50      0.33    240000
+weighted avg       0.25      0.50      0.33    240000
+
+[[120000      0]
+ [120000      0]]
+test_loss 6043.113278492496
+
+Test set: Average loss: 0.0252 
+Accuracy: 120000/240000 (50.00%)
+
+Testing accuracy: 50.00
+
+################# iou_threshold=0.7 #################
+              precision    recall  f1-score   support
+
+           0       0.50      1.00      0.67    120000
+           1       0.00      0.00      0.00    120000
+
+    accuracy                           0.50    240000
+   macro avg       0.25      0.50      0.33    240000
+weighted avg       0.25      0.50      0.33    240000
+
+[[120000      0]
+ [120000      0]]
+test_loss 6099.471459605403
+
+Test set: Average loss: 0.0254 
+Accuracy: 120000/240000 (50.00%)
+
+Testing accuracy: 50.00
+              precision    recall  f1-score   support
+
+           0       0.50      1.00      0.67    120000
+           1       0.00      0.00      0.00    120000
+
+    accuracy                           0.50    240000
+   macro avg       0.25      0.50      0.33    240000
+weighted avg       0.25      0.50      0.33    240000
+
+[[120000      0]
+ [120000      0]]
+test_loss 6099.471459605403
+
+Test set: Average loss: 0.0254 
+Accuracy: 120000/240000 (50.00%)
+
+Testing accuracy: 50.00
+
+################# iou_threshold=0.5 #################
