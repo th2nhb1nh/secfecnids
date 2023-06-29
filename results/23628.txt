@@ -1,0 +1,34 @@
+              precision    recall  f1-score   support
+
+           0       0.69      0.81      0.74    120000
+           1       0.77      0.63      0.69    120000
+
+    accuracy                           0.72    240000
+   macro avg       0.73      0.72      0.72    240000
+weighted avg       0.73      0.72      0.72    240000
+
+[[96881 23119]
+ [44412 75588]]
+test_loss 4748.743887801981
+
+Test set: Average loss: 0.0198 
+Accuracy: 172469/240000 (71.86%)
+
+Testing accuracy: 71.86
+              precision    recall  f1-score   support
+
+           0       0.69      0.81      0.74    120000
+           1       0.77      0.63      0.69    120000
+
+    accuracy                           0.72    240000
+   macro avg       0.73      0.72      0.72    240000
+weighted avg       0.73      0.72      0.72    240000
+
+[[96881 23119]
+ [44412 75588]]
+test_loss 4748.743887801981
+
+Test set: Average loss: 0.0198 
+Accuracy: 172469/240000 (71.86%)
+
+Testing accuracy: 71.86

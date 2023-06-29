@@ -50,7 +50,7 @@ class CNN_UNSW(torch.nn.Module):
             torch.nn.MaxPool1d(kernel_size=4, stride=2)
         )
         self.fn1 = torch.nn.Sequential(
-            torch.nn.Linear(288, 128),  # Adjusted input size
+            torch.nn.Linear(256, 128),  # Adjusted input size
             torch.nn.ReLU(inplace=True)
         )
         self.fn2 = torch.nn.Sequential(
@@ -59,11 +59,24 @@ class CNN_UNSW(torch.nn.Module):
         )
 
     def forward(self, x):
+        # print(1)
+        # print(x.shape)
+        
         x = self.conv1(x)
+        # print('conv1')
+        # print(x.shape)
         x = self.conv2(x)
+        # print('conv2')
+        # print(x.shape)
         x = x.view(x.size(0),-1)
+        # print('conv3')
+        # print(x.shape)
         x = self.fn1(x)
+        # print('fn1')
+        # print(x.shape)
         x = self.fn2(x)
+        # print('fn2')
+        # print(x.shape)
         return x
 
 class MLP(torch.nn.Module):

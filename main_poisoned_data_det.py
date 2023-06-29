@@ -59,6 +59,8 @@ def readdataset():
     Xt, yt = upsampling.fit_resample(X_down, y_down)
     print('transformed y', sorted(Counter(yt).items()))
     df = pd.DataFrame(Xt, index=yt)
+    ### dropna
+    df.dropna(axis=0, how='any', inplace=True)
     df.sort_index(ascending=True, inplace=True)
     train0 = df.iloc[0:280000]
     train1 = df.iloc[400000:400000 + 70000]
@@ -69,7 +71,6 @@ def readdataset():
     df_train = pd.concat([train0, train1, train2, train3, train4])  # , train5
     df_train = shuffle(df_train)
     np_features_train = df_train.values
-
     np_features_train = np_features_train[:, np.newaxis, :]
     np_label_train = df_train.index.values.ravel()
     print('train', sorted(Counter(np_label_train).items()))
@@ -83,6 +84,9 @@ def readdataset():
     df_test = pd.concat([test0, test1, test2, test3, test4])  # , test5
     df_test = shuffle(df_test)
     features_test = df_test.values
+
+    # dropna b~~~~ handle
+
     np_features_test = np.array(features_test)
 
     np_features_test = np_features_test[:, np.newaxis, :]
@@ -551,6 +555,7 @@ def defence_our(omega_locals, w_locals, w_local_pre):
                 selected_weights.append((d.view(-1).detach().numpy() - d_pre.view(-1).detach().numpy()))
             else:
                 pass
+        print(selected_weights)
         X_norm.append(list(chain(*selected_weights)))
         # X_all.append(list(chain(*all_weights)))
 
@@ -598,7 +603,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--defence', type=str, default="our", choices=["our"], help="name of aggregation method")
     parser.add_argument('--prate', type=float, default=0.5, help="poison instance ratio")
-    parser.add_argument('--Tattack', type=int, default=5, help="attack round")
+    parser.add_argument('--Tattack', type=int, default=1, help="attack round")
     args = parser.parse_args()
 
     prate = args.prate
@@ -667,7 +672,7 @@ if __name__ == '__main__':
                 x = np.concatenate((x1, x2[0:int(prate * len(x2)), :, :]), axis=0)
                 y = np.concatenate((y1, y2[0:int(prate * len(x2))]), axis=0)
                 ldr_train = DataLoader(ReadData(x, y), batch_size=1024, shuffle=True)
-                epochs_per_task = 5
+                epochs_per_task = 1
                 normal_list_client[client] = res_list1
                 anomaly_list_client[client] = [i for i in range(len(x1),(len(x1)+int(prate*len(x2))))]
 
@@ -675,7 +680,7 @@ if __name__ == '__main__':
                 Y_norm = np.row_stack((Y_norm, [0]))
                 poison_client_flag = False
                 ldr_train = DataLoader(ReadData(x, y), batch_size=1024, shuffle=True)
-                epochs_per_task = 5
+                epochs_per_task = 1
                 if interation == (Ta - 1):
                     normal_list_client[client] = [i for i in range(len(y)) if y[i] == 0]
                     anomaly_list_client[client] = [i for i in range(len(y)) if y[i] != 0]
@@ -722,6 +727,7 @@ if __name__ == '__main__':
 
             w_locals.append(copy.deepcopy(net.state_dict()))
 
+        # Aggregation of the last round
         if interation == (Ta - 1):
             w_glob, pre_out_label = defence_our(omega_locals, w_locals, w_local_pre)
             test_acc, test_loss = test_w(w_glob, dataset_test)
@@ -740,9 +746,11 @@ if __name__ == '__main__':
             profiler = TorchProfiler(model)
             layerdict = profiler.create_layers(0)  #### all layers
             print(layerdict)
-            tp = profiler.create_profile(torch.rand(1, 1, 42), layerdict, threshold=0.5, show_progress=False, parallel=False)
+            tp = profiler.create_profile(torch.rand(1, 1, 40), layerdict, threshold=0.5, show_progress=False, parallel=False)
+            # profiling results for each class
             class_profiles = dict()
             selected_index = dict()
+            # profiling results for the malicious class
             class_profiles_mal = dict()
             iou_normal = dict()
             iou_threshold = dict()
@@ -758,8 +766,10 @@ if __name__ == '__main__':
                     class_profiles[cls][layer] = list()
                     selected_index[cls][layer] = Counter({})
                     class_profiles_mal[cls][layer] = list()
-                    # print(tp.neuron_counts[layer])
-                    # print('Layer ', layer, 'the number of important neurons:', len(list(chain(*tp.neuron_counts[layer][0]))))
+                    print(tp.neuron_counts[layer])
+                    # print('Layer ', layer, 'the number of important neurons:', len(list(chain(tp.neuron_counts[layer][0]))))
+                    print('Layer ', layer, 'the number of important neurons:', len(list(chain(tp.neuron_counts[layer]))))
+
             ### obtain the class paths of clean data at the clean client sides
             for index in normal_client_indexs:
                 images = x_client[index]
@@ -771,7 +781,7 @@ if __name__ == '__main__':
                                                                 replace=False)
 
                 for i in normal_client_sampling_index:
-                    tprofiles = profiler.create_profile(torch.Tensor(images[i]).resize_(1, 1, 42),
+                    tprofiles = profiler.create_profile(torch.Tensor(images[i]).resize_(1, 1, 40),
                                                         layerdict,
                                                         threshold=0.5,
                                                         show_progress=False,
@@ -802,7 +812,9 @@ if __name__ == '__main__':
                     avg_ious = np.mean(ious)
                     iou_normal[cls].append(avg_ious)
             for cls in range(2):
-                # iou_threshold[cls] = np.median(np.array(iou_normal[cls]))
+                print('cls')
+                print('cls', cls, 'iou_normal', np.mean(np.array(iou_normal[cls])))
+                # iou_threshold[cls] = np.median(np.array(iou_normal[cls]))                \
                 iou_threshold[cls] = np.percentile(np.array(iou_normal[cls]), 5)
             print('iou_threshold', iou_threshold)
             print('###############normal client done')
@@ -816,7 +828,7 @@ if __name__ == '__main__':
                 normal_list_predicted = []
                 anomaly_list_predicted = []
                 for i in range(len(labels)):
-                    tprofiles_mal = profiler.create_profile(torch.Tensor(images[i]).resize_(1, 1, 42),
+                    tprofiles_mal = profiler.create_profile(torch.Tensor(images[i]).resize_(1, 1, 40),
                                                             layerdict,
                                                             threshold=0.5,
                                                             show_progress=False,
@@ -835,9 +847,9 @@ if __name__ == '__main__':
                 recall_anomaly = set(anomaly_list_predicted).intersection(set(anomaly_list))
                 # print('normal 0', 'recall of predicted: ', len(recall_normal) / len(normal_list_predicted),
                 #       'recall of all: ', len(recall_normal) / len(normal_list))
-                print('anomaly 1', 'recall of predicted: ', len(recall_anomaly) / len(anomaly_list_predicted),
-                      'recall of all: ', len(recall_anomaly) / len(anomaly_list), 'clean removed: ',
-                      (len(anomaly_list_predicted) - len(recall_anomaly)) / len(normal_list), 'recall_anomaly: ',
+                print('anomaly 1', '| recall of predicted: ', len(recall_anomaly) / len(anomaly_list_predicted),
+                      '| recall of all: ', len(recall_anomaly) / len(anomaly_list), '| clean removed: ',
+                      (len(anomaly_list_predicted) - len(recall_anomaly)) / len(normal_list), '| recall_anomaly: ',
                       len(recall_anomaly), len(anomaly_list), len(anomaly_list_predicted), len(normal_list))
         else:
             w_glob = FedAvg(w_locals)
@@ -857,5 +869,5 @@ if __name__ == '__main__':
     net_global.eval()
     acc_test, loss_test = test_img(net_global, dataset_test)
     print("Testing accuracy: {:.2f}".format(acc_test))
-    #### save the model trained with the norm dataset
-    # torch.save(net_global,save_global_model)
+    ### save the model trained with the norm dataset
+    torch.save(net_global,save_global_model)
