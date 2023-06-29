@@ -659,7 +659,7 @@ if __name__ == '__main__':
             if (num_poison > 0) & (num_poison_client < 40) & (interation == (Ta - 1)):  # & (interation > 0)
                 num_poison_client += 1
                 Y_norm = np.row_stack((Y_norm, [1]))  ### 异常为1
-                print('##########poison client', num_poison_client)
+                print('########### Poison client', num_poison_client)
                 poison_client_flag = True
                 res_list = [i for i in range(len(y)) if y[i] == 1]  ###
                 res_list1 = [i for i in range(len(y)) if y[i] != 1]  ### normal
@@ -732,7 +732,7 @@ if __name__ == '__main__':
             w_glob, pre_out_label = defence_our(omega_locals, w_locals, w_local_pre)
             test_acc, test_loss = test_w(w_glob, dataset_test)
             print('OUR Test set: Average loss: {:.4f} \tAccuracy: {:.2f}'.format(test_loss, test_acc))
-            print('###########Filter##################')
+            print('########### Filter ###########')
             normal_client_indexs = []
             poison_client_indexs = []
             for i in range(len(pre_out_label)):
@@ -812,11 +812,13 @@ if __name__ == '__main__':
                     avg_ious = np.mean(ious)
                     iou_normal[cls].append(avg_ious)
             for cls in range(2):
-                print('cls', cls, 'iou_normal', np.mean(np.array(iou_normal[cls])))
+                print('cls', cls, '| iou_normal', np.mean(np.array(iou_normal[cls])))
+                print(np.array(iou_normal[cls]))
                 # iou_threshold[cls] = np.median(np.array(iou_normal[cls]))                \
                 iou_threshold[cls] = np.percentile(np.array(iou_normal[cls]), 5)
+
             print('iou_threshold', iou_threshold)
-            print('###############normal client done')
+            print('########### Normal client done')
             ##### detect the poisoned data at the poisoned client
             for client in poison_client_indexs:
                 images = x_client[client]
